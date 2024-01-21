@@ -1,10 +1,6 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 import PackageDescription
 import class Foundation.ProcessInfo
-
-// force building as dynamic library
-let dynamicLibrary = ProcessInfo.processInfo.environment["SWIFT_BUILD_DYNAMIC_LIBRARY"] != nil
-let libraryType: PackageDescription.Product.Library.LibraryType? = dynamicLibrary ? .dynamic : nil
 
 var package = Package(
     name: "Socket",
@@ -15,17 +11,10 @@ var package = Package(
         .tvOS(.v13),
     ],
     products: [
-        .library(
-            name: "Socket",
-            type: libraryType,
-            targets: ["Socket"]
-        ),
+        .library(name: "Socket", targets: ["Socket"]),
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/PureSwift/swift-system",
-            branch: "feature/dynamic-lib"
-        )
+        .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
     ],
     targets: [
         .target(
@@ -47,13 +36,3 @@ var package = Package(
         )
     ]
 )
-
-// SwiftPM command plugins are only supported by Swift version 5.6 and later.
-#if swift(>=5.6)
-let buildDocs = ProcessInfo.processInfo.environment["BUILDING_FOR_DOCUMENTATION_GENERATION"] != nil
-if buildDocs {
-    package.dependencies += [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    ]
-}
-#endif
